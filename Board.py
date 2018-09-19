@@ -25,11 +25,7 @@ class Board:
         gameWon = False
         
         for i in range(0,self.rows):
-            if(gameWon):
-                break
             for j in range(0,self.cols):
-                if(gameWon):
-                    break
                 if(self.board[i][j] != 0):
                     for dir in self.searchDirections:
                         gameWon = True
@@ -39,8 +35,9 @@ class Board:
                                     gameWon = False
                                     break
                             except IndexError:
-                                pass
+                                gameWon = False
+                                break
                         if(gameWon):
-                            winner = self.board[i][j]
+                            return self.board[i][j]
 
         return winner
