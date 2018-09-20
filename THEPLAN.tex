@@ -1,0 +1,48 @@
+\documentclass{article}[12pt]
+\title{THE PLAN}
+\date{}
+\begin{document}
+\maketitle
+
+\section{Coding Connect-Four}
+Not writing anything here because it seems pretty easy.
+
+\section{The ComputerPlayer Class}
+
+\begin{itemize}
+\item Function \emph{init} - Instantiate a NeuralNet object (see below)
+\item Function \emph{takeTurn} - Input the current gameBoard (which should be an element of the Game class). Find the list of possible moves. For each possible move, take the corresponding game board and put it through the NeuralNet. Note that the NeuralNet somehow needs to know who it is optimizing for (should it find the move that makes player1 win or player2?). My proposal is to save one board for each player, where a 1 in some locations means ``my piece'', -1 means ``their piece'', and 0 means empty. The reason I suggest this is so that we can handle the issue before it ever reaches the NeuralNet (so we don't need to add currentPlayer as an input to the NeuralNet).
+\item var \emph{gameBoard} - Read the above discussion for why I want this player to have his own gameboard. If we wind up agreeing on this then we should move around how variables are stored (the Game class shouldn't store the board I don't think).
+\end{itemize}
+
+\section{The Neural Net Part}
+Note: A lot of this is subject to change, especially since I'm writing this up in a plane with no internet access so it could wind up being bogus. But here's my first pass at putting together the neural net structure.
+
+The overall plan is for each neuron to accept a linear combination of values from the previous layer, pass it through our activation function (my first vote is ReLU it's so easy), and send this value with the corresponding weights onto the next layer. I propose we implement this with the following structure
+
+\subsection{NeuralNet Class}
+
+\begin{itemize}
+\item Function \emph{init} - The constructor. From a separate file it loads the neuron structure, along with each of the connections and weights.
+\item Var \emph{numLayers} - Number of layers, including input and output layer
+\item Var \emph{neurons} - a 2d list. First index is which layer, second index is which neuron in layer. Actual list elements are from the Neuron class, which is below.
+\item Function \emph{doTheThing} - The function that calculates the value based on a given input. This should load up the first layer (index 0) of the network with the input values, \emph{fire} each layer (one at a time), and collect the output from the last layer.
+\end{itemize}
+
+\subsection{Neuron Class}
+
+\begin{itemize}
+\item Function \emph{init} - Inputs the \emph{nextNeurons} and \emph{weights}. Sets \emph{value} to zero.
+\item Var \emph{value} - Holds the input from the previous layer. Initialize this to zero, then update it as the nodes from the previous layer get fired off. Once the previous layer is finished this is the final value.
+\item Var \emph{nextNeurons} - A list of pointers to the next layer of neurons
+\item Var \emph{weights} - A list of weights corresponding to \emph{nextNeurons} above
+\item Function \emph{fire} - Apply the activation to \emph{value} and send it (with appropriate weights) to each guy in \emph{nextNeurons}, updating the \emph{value} in that dude.
+\end{itemize}
+
+\section{Update Process}
+
+Hahahhahaha I don't know how this works. This is where most of the studying will come in. But we'll somehow update the file that stores all of our network weights.
+
+There's even a decision to be made between updating after every turn of the game, or only updating after a full game has been played out.
+
+\end{document}
