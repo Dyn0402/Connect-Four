@@ -20,16 +20,15 @@ class Board:
     # At every square, look up-left, up, up-right, right for a win
     # return 0 means no winner. 1 means player 1, -1 means player 2
     def isWon(self):
-        
         for i in range(0,self.rows):
             for j in range(0,self.cols):
                 if(self.board[i][j] != 0):
-                    for dir in self.searchDirections:
+                    for direction in self.searchDirections:
                         # Check in given direction to see if we get 4 in a row.
                         gameWon = True
-                        for len in range(1,self.winLength):
+                        for length in range(1,self.winLength):
                             try:
-                                if(self.board[i][j] != self.board[i+len*dir[0]][j+len*dir[1]]):
+                                if(self.board[i][j] != self.board[i+length*direction[0]][j+length*direction[1]]):
                                     gameWon = False
                                     break
                             except IndexError:
