@@ -1,8 +1,8 @@
 class Board:
-    def __init__(self):
-        self.rows = 6
-        self.cols = 7
-        self.winLength = 4
+    def __init__(self, numRows = 6, numCols = 7, winLength = 4):
+        self.rows = numRows
+        self.cols = numCols
+        self.winLength = winLength
         self.board = [[0 for i in range(0,self.cols)] for j in range(0,self.rows)]
         self.searchDirections = [[1,-1],[1,0],[1,1],[0,1]]
 
