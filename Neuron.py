@@ -16,4 +16,4 @@ class Neuron:
     def fire(self):
         actVal = AF.ReLU(self.value)
         for neuron, weight in self.nextNeurons.items():
-            neuron.value = actVal*weight
+            neuron.value += actVal*weight
