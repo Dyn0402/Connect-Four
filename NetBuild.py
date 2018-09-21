@@ -15,10 +15,10 @@ import Neuron
 def buildNet(layers, startWeight = 1.0):
     neurons = []
     for layer in layers[::-1]:
-        if len(neurons) > 1:
+        if len(neurons) < 1:
             nextNeurons = []
         else:
-            nextNeurons = zip(neurons[-1], len(neurons[-1])*[startWeight])
+            nextNeurons = dict(zip(neurons[-1], len(neurons[-1])*[startWeight])) #Currently a dictionary of {neuron object:weight float}. Can change here if needed.
         neurons.append([])
         for neuron in range(layer):
             neurons[-1].append(Neuron.Neuron(nextNeurons))
@@ -26,3 +26,4 @@ def buildNet(layers, startWeight = 1.0):
     neurons.reverse() #Start with inputs end with outputs.
     
     return(neurons)
+    
