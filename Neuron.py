@@ -7,5 +7,8 @@ Created on Thu Sep 20 17:27:30 2018
 
 
 class Neuron:
-    def __init__(self):
+    def __init__(self, nextNeurons):
+        self.nextNeurons = nextNeurons
+    
+    def connectNeurons(self):
         pass

@@ -6,6 +6,7 @@ Created on Thu Sep 20 15:36:23 2018
 """
 
 import NetIO as NIO
+import NetBuild as NB
 
 
 class NeuralNet:
@@ -13,9 +14,12 @@ class NeuralNet:
     #layer[0] input layer
     #layer[-1] output layer
     #layer[i] number of neurons in ith layer
-    def __init__(self, netPath, layers = []):
-        if layers != '':
-            neurons = NIO.loadNetFile(netPath)
+    def __init__(self, netPath = '', layers = []):
+        if netPath != '':
+            pass
         else:
-            neurons = NIO.createNetFile()
+            neurons = NB.buildNet(layers)
+        
+        self.numLayers = len(self.neurons)
+        
             
