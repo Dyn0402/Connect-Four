@@ -24,14 +24,13 @@ class NeuralNet:
             if self.path != '':
                 NIO.loadNetFile()
             else:
-                self.neurons = NB.buildNet(layers) #Empty object
+                self.neurons = NB.buildNet(layers) #Empty object if no params given to init.
         
         self.numLayers = len(self.neurons)
         self.output = [outNeuron.value for outNeuron in self.neurons[-1]]
         
         
     def doTheThing(self):
-        getInput(self.neurons[0]) #################################################
         for layer in self.neurons[:-1]:
             for neuron in layer:
                 neuron.fire()
@@ -46,3 +45,11 @@ class NeuralNet:
                 for connection in neuron.nextNeurons:
                     newWeight = updateConnection() ################################
                     neuron.nextNeurons[connection] = newWeight
+                    
+    
+    def updateInput(self, newInputs):
+        if(len(newInputs) != len(self.neurons[0])):
+            print('Input layer dimension mismatch. Input neurons not updated.')
+        else:
+            for i in range(len(self.neurons[0])):
+                self.neurons[0][i].value = newInputs[i]
