@@ -13,7 +13,15 @@ class Neuron:
         self.nextNeurons = nextNeurons
         self.value = value
         
-    def fire(self):
-        actVal = AF.ReLU(self.value)
-        for neuron, weight in self.nextNeurons.items():
-            neuron.value += actVal*weight
+    def fire(self, func='relu'):
+        actVal = AF.ActFunc(self.value, func=func)
+        for i in range(len(self.nextNeurons['connections'])):
+            val = self.nextNeurons['connections'][i].getValue()
+            dval = self.nextNeurons['weights'][i] * actVal
+            self.nextNeurons['connections'][i].setValue(val + dval)
+            
+    def setValue(self, x):
+        self.value = x
+        
+    def getValue(self):
+        return(self.value)

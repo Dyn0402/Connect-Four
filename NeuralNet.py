@@ -17,30 +17,32 @@ class NeuralNet:
     def __init__(self, netPath = '', layers = []):
         self.path = netPath
         if layers != []:
-            self.neurons = NB.buildNet(layers)
+            self.net = NB.buildNet(layers)
             if self.path != '':
                 NIO.createNetFile(self)
         else:
             if self.path != '':
                 NIO.loadNetFile()
             else:
-                self.neurons = NB.buildNet(layers) #Empty object if no params given to init.
+                self.net = NB.buildNet(layers) #Empty object if no params given to init.
         
-        self.numLayers = len(self.neurons)
-        self.output = [outNeuron.value for outNeuron in self.neurons[-1]]
+        self.numLayers = len(self.net)
+        self.output = [outNeuron.value for outNeuron in self.net[-1]]
         
         
-    def doTheThing(self):
-        for layer in self.neurons[:-1]:
+    def fireNet(self, func='relu'):
+        for neuron in self.net[0]:
+            neuron.fire(func='identity')
+        for layer in self.net[1:-1]:
             for neuron in layer:
-                neuron.fire()
+                neuron.fire(func=func)
                 
-        self.output = [outNeuron.value for outNeuron in self.neurons[-1]]
-        
-        
-        
+        self.output = [outNeuron.value for outNeuron in self.net[-1]]
+    
+    
+    #Not functional method.    
     def updateWeights(self):
-        for layer in self.neurons:
+        for layer in self.net:
             for neuron in layer:
                 for connection in neuron.nextNeurons:
                     newWeight = updateConnection() ################################
@@ -48,8 +50,12 @@ class NeuralNet:
                     
     
     def updateInput(self, newInputs):
-        if(len(newInputs) != len(self.neurons[0])):
+        if(len(newInputs) != len(self.net[0])):
             print('Input layer dimension mismatch. Input neurons not updated.')
         else:
-            for i in range(len(self.neurons[0])):
-                self.neurons[0][i].value = newInputs[i]
+            for i in range(len(self.net[0])):
+                self.net[0][i].value = newInputs[i]
+                
+                
+    def getOutput(self):
+        return(self.output)
