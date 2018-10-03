@@ -1,4 +1,5 @@
 \documentclass{article}[12pt]
+\usepackage{mathtools}
 \title{THE PLAN}
 \date{}
 \begin{document}
@@ -44,5 +45,116 @@ The overall plan is for each neuron to accept a linear combination of values fro
 Hahahhahaha I don't know how this works. This is where most of the studying will come in. But we'll somehow update the file that stores all of our network weights.
 
 There's even a decision to be made between updating after every turn of the game, or only updating after a full game has been played out.
+
+
+\section{Backpropagation}
+
+Backpropagation is a method for updating the weights of the neural net when desired output values are known for given input values. 
+
+
+\begin{figure}
+    \begin{center}
+        \makebox[\textwidth]{\includegraphics[width=\paperwidth]{NetPDF.pdf}}
+    \end{center}
+    \caption{Neural net example with variable definitions used in backpropagation section.}
+    \label{fig:1}
+\end{figure}
+
+
+\subsection{Output Difference}
+
+Forward propagate the given input values through the neural net to produce resulting output. For each output neuron, compare the resulting value from the neural net to the given target value. We can then calculate how far off the mark we were for each ($i$th) neuron:
+
+\begin{equation}
+    \delta b_i = b_i^{actual} - b_i^{target}
+    \label{eq:1}
+\end{equation}
+
+
+\subsection{Sum Difference}
+
+From the output difference $\delta b_i$, we want to know how far off the corresponding sum (value of each neuron before activation function is applied) is $\delta s_i$. We can take advantage of the derivative of the activation function ($A(s_i)=b_i$) here:
+
+\begin{equation}
+    A'(s_i) \equiv \frac{dA(s_i)}{ds_i} = \frac{db_i}{ds_i} \approx \frac{\delta b_i}{\delta s_i}
+    \label{eq:2}
+\end{equation}
+
+This final step of ~\ref{eq:2} can be obtained via Taylor expansion of the activation function and approximates the change in $b_i$ as linear in $s_i$ (just the tangent line at $s_i$). From here, as long as we are able to compute the derivative of the activation function ($A'(s_i)$), we can then approximate the variation of the sum necessary to correct our output:
+
+\begin{equation}
+    \delta s_i = \frac{\delta b_i}{A'(s_i)}
+    \label{eq:3}
+\end{equation}
+
+
+\subsection{Weight Difference}
+
+We're now in a position to approximate the variation in weights necessary to produce the correct sum difference (which in turn will approximately produce the correct output). We first recall the definition of the sums $s_i$:
+
+\begin{equation}
+    s_i(a_j, c_{ji}) = \sum_{j=0}^N a_j c_{ji}
+    \label{eq:4}
+\end{equation}
+
+Here, $N$ is the number of neurons (in the previous layer) connected to the $i$th output neuron. Using reasoning similar to that of the previous section, we can expand the variation of $s_i$:
+
+\begin{equation}
+    \delta s_i(a_j, c_{ji}) = \sum_{j=0}^N \frac{\partial s_i}{\partial a_j} \delta a_j + \frac{\partial s_i}{\partial c_{ji}} \delta c_{ji}
+    \label{eq:5}
+\end{equation}
+
+However, at this stage in the process, the values of the neurons in the previous layer ($a_j$) are fixed, so their variations will vanish ($a_j = 0  \quad \forall j$). In addition, the derivative of the sum with respect to an individual weight is, by equation ~\ref{eq:4}, simply equal to $a_j$. What's left is then:
+
+\begin{equation}
+    \delta s_i(a_j, c_{ji}) = \sum_{j=0}^N a_j \delta c_{ji}
+    \label{eq:6}
+\end{equation}
+
+
+This equation simply states that the change in the output sum must equal the sum of each incoming activation times the change in its corresponding weight. This seems to match intuition. This equation does not, however, tell us how to divide up the load between the incoming neurons. For example, we could let a single neuron (say $c_{ki}$) do all the lifting and leave the rest unchanged. In this case:
+
+\begin{equation}
+    \delta c_{ji} = 
+    \begin{cases}
+        \delta s_i / a_k & j=k \\
+        0 & j \neq k
+    \end{cases}
+    \label{eq:7}
+\end{equation}
+
+This equation is under-constrained and we will have to make a choice in order to proceed. A decent choice seems to be splitting the load equally among the incoming neurons. In this case, each neuron connection is updated each time the backpropagation is run, which seems to have both benefits and malefits. With this choice, we dictate that each element of the sum have the same value:
+
+\begin{equation}
+    a_j \delta c_{ji} = a_k \delta c_{ki} \equiv \epsilon \qquad \forall j,k
+    \label{eq:8}
+\end{equation}
+
+Then equation ~\ref{eq:6} becomes:
+
+\begin{equation}
+    \delta s_i(a_j, c_{ji}) = \sum_{j=0}^N a_j \delta c_{ji} = \epsilon \sum_{j=0}^N = N \epsilon = N a_k \delta c_{ki}
+    \label{eq:9}
+\end{equation}
+
+Solving for the change in the $k$th weight:
+
+\begin{equation}
+    \delta c_{ki} = \frac{\delta s_i}{N a_k} 
+    \label{eq:10}
+\end{equation}
+
+Now that the change in each neuron weight has been approximated, we can simply add the variation to the original weights and save the updated weights.
+
+
+\subsection{Propagating Back}
+
+I thought propagating this procedure back through the other hidden layers to the input layer would be trivial once I had the single layer figured out, but I'm not seeing it right away so will have to go back to Steven's stupid article. This could be a sign that I've done something wrong/don't actually have the right understanding of this procedure. Will have to look further into it later.
+
+
+\section{Random Moves}
+
+We also need to throw random moves into the training. If you don't have random moves, the net will tend to optimize to a local minimum. There's apparently an $\epsilon$-greedy constant (between 0 and 1) that gives the probability of taking a random move (1 means always random). I learned about something similar called simulated annealing in a computational physics class, but basically you decrease $\epsilon$ over training, which hopefully allows you to settle into a global rather than local minimum. 
+
 
 \end{document}
